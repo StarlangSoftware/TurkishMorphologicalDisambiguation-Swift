@@ -12,7 +12,7 @@ let package = Package(
             targets: ["MorphologicalDisambiguation"]),
     ],
     dependencies: [
-        .package(name: "AnnotatedTree", url: "https://github.com/StarlangSoftware/AnnotatedTree-Swift.git", .exact("1.0.4")),
+        .package(name: "AnnotatedTree", url: "https://github.com/StarlangSoftware/AnnotatedTree-Swift.git", .exact("1.0.5")),
         .package(name: "NGram", url: "https://github.com/StarlangSoftware/NGram-Swift.git", .exact("1.0.4")),
     ],
     targets: [
