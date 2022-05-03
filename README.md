@@ -26,29 +26,25 @@ Then the morphological disambiguation problem can be defined as follows: For a g
 1. Collect a set of sentences to annotate. 
 2. Each sentence in the collection must be named as xxxx.yyyyy in increasing order. For example, the first sentence to be annotated will be 0001.train, the second 0002.train, etc.
 3. Put the sentences in the same folder such as *Turkish-Phrase*.
-4. Build the project and put the generated sentence-morphological-analyzer.jar file into another folder such as *Program*.
+4. Build the [Java](https://github.com/starlangsoftware/TurkishMorphologicalDisambiguation) project and put the generated sentence-morphological-analyzer.jar file into another folder such as *Program*.
 5. Put *Turkish-Phrase* and *Program* folders into a parent folder.
-![Main Folder](folder.png)
 
 ### Annotation
 
 1. Open sentence-morphological-analyzer.jar file.
 2. Wait until the data load message is displayed.
 3. Click Open button in the Project menu.
-![Open File](open.png)
 4. Choose a file for annotation from the folder *Turkish-Phrase*.  
-![Choose File](choosefile.png)
 5. For each word in the sentence, click the word, and choose correct morphological analysis for that word.
-![Morphology Annotation](morphology.png)
 6. Click one of the next buttons to go to other files.
 
 ## Classification DataSet Generation
 
-After annotating sentences, you can use [DataGenerator](https://github.com/starlangsoftware/DataGenerator) package to generate classification dataset for the Morphological Disambiguation task.
+After annotating sentences, you can use [DataGenerator](https://github.com/starlangsoftware/DataGenerator-Py) package to generate classification dataset for the Morphological Disambiguation task.
 
 ## Generation of ML Models
 
-After generating the classification dataset as above, one can use the [Classification](https://github.com/starlangsoftware/Classification) package to generate machine learning models for the Morphological Disambiguation task.
+After generating the classification dataset as above, one can use the [Classification](https://github.com/starlangsoftware/Classification-Swift) package to generate machine learning models for the Morphological Disambiguation task.
 
 For Developers
 ============
