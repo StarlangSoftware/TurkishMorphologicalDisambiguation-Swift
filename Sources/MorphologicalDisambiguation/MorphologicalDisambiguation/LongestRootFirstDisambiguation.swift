@@ -11,11 +11,16 @@ import MorphologicalAnalysis
 public class LongestRootFirstDisambiguation : MorphologicalDisambiguator{
 
     private var rootList: [String:String] = [:]
-
+    
+    /// Constructor for the longest root first disambiguation algorithm. The method reads a list of (surface form, most
+    /// frequent root word for that surface form) pairs from a given file.
+    /// - Parameter fileName: File that contains list of (surface form, most frequent root word for that surface form) pairs.
     public init(fileName: String){
         readFromFile(fileName: fileName)
     }
     
+    /// Constructor for the longest root first disambiguation algorithm. The method reads a list of (surface form, most
+    /// frequent root word for that surface form) pairs from 'rootlist.txt' file.
     public init(){
         readFromFile()
     }

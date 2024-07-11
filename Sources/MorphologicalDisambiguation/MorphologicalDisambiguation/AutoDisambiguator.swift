@@ -13,6 +13,13 @@ public class AutoDisambiguator{
     
     public var morphologicalAnalyzer : FsmMorphologicalAnalyzer? = nil
     
+    /// Checks if there is any singular second person agreement or possessor tag before the current word at position
+    /// index.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - correctParses: All correct morphological parses of the previous words.
+    /// - Returns: True, if at least one of the morphological parses of the previous words has a singular second person
+    /// agreement or possessor tag, false otherwise.
     private static func isAnyWordSecondPerson(index: Int, correctParses: [FsmParse]) -> Bool{
         var count : Int = 0
         for i in stride(from: index - 1, through: 0, by: -1){
@@ -23,6 +30,12 @@ public class AutoDisambiguator{
         return count >= 1
     }
     
+    /// Checks if there is any plural agreement or possessor tag before the current word at position index.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - correctParses: All correct morphological parses of the previous words.
+    /// - Returns: True, if at least one of the morphological parses of the previous words has a plural agreement or
+    /// possessor tag, false otherwise.
     private static func isPossessivePlural(index: Int, correctParses: [FsmParse]) -> Bool{
         for i in stride(from: index - 1, through: 0, by: -1){
             if correctParses[i].isNoun(){
@@ -32,6 +45,9 @@ public class AutoDisambiguator{
         return false
     }
     
+    /// Given all possible parses of the next word, this method returns the most frequent pos tag.
+    /// - Parameter nextParseList: All possible parses of the next word.
+    /// - Returns: Most frequent pos tag in all possible parses of the next word.
     private static func nextWordPos(nextParseList: FsmParseList) -> String{
         let map = CounterHashMap<String>()
         for i in 0..<nextParseList.size(){
@@ -40,30 +56,65 @@ public class AutoDisambiguator{
         return map.max()!
     }
     
+    /// Checks if the current word is just before the last word.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    /// - Returns: True, if the current word is just before the last word, false otherwise.
     private static func isBeforeLastWord(index: Int, fsmParses: [FsmParseList]) -> Bool{
         return index + 2 == fsmParses.count
     }
     
+    /// Checks if there is at least one word after the current word.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    /// - Returns: True, if there is at least one word after the current word, false otherwise.
     private static func nextWordExists(index: Int, fsmParses: [FsmParseList]) -> Bool{
         return index + 1 < fsmParses.count
     }
-
+    
+    /// Checks if there is at least one word after the current word and that next word is a noun.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    /// - Returns: True, if there is at least one word after the current word and that next word is a noun, false otherwise.
     private static func isNextWordNoun(index: Int, fsmParses: [FsmParseList]) -> Bool{
         return index + 1 < fsmParses.count && nextWordPos(nextParseList: fsmParses[index + 1]) == "NOUN"
     }
-
+    
+    /// Checks if there is at least one word after the current word and that next word is a number.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    /// - Returns: True, if there is at least one word after the current word and that next word is a number, false
+    /// otherwise.
     private static func isNextWordNum(index: Int, fsmParses: [FsmParseList]) -> Bool{
         return index + 1 < fsmParses.count && nextWordPos(nextParseList: fsmParses[index + 1]) == "NUM"
     }
     
+    /// Checks if there is at least one word after the current word and that next word is a noun or adjective.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    /// - Returns: True, if there is at least one word after the current word and that next word is a noun or adjective,
+    /// false otherwise.
     private static func isNextWordNounOrAdjective(index: Int, fsmParses: [FsmParseList]) -> Bool{
         return index + 1 < fsmParses.count && (nextWordPos(nextParseList: fsmParses[index + 1]) == "NOUN" || nextWordPos(nextParseList: fsmParses[index + 1]) == "ADJ" || nextWordPos(nextParseList: fsmParses[index + 1]) == "DET")
     }
     
+    /// Checks if the current word is the first word of the sentence or not.
+    /// - Parameter index: Position of the current word.
+    /// - Returns: True, if the current word is the first word of the sentence, false otherwise.
     private static func isFirstWord(index: Int) -> Bool{
         return index == 0
     }
     
+    /// Checks if there are at least two occurrences of 'ne', 'ya' or 'gerek' in the sentence.
+    /// - Parameters:
+    ///   - fsmParses: All morphological parses of the current sentence.
+    ///   - word: 'ne', 'ya' or 'gerek'
+    /// - Returns: True, if there are at least two occurrences of 'ne', 'ya' or 'gerek' in the sentence, false otherwise.
     private static func containsTwoNeOrYa(fsmParses: [FsmParseList], word: String) -> Bool{
         var count : Int = 0
         for fsmParse in fsmParses{
@@ -75,10 +126,27 @@ public class AutoDisambiguator{
         return count == 2
     }
     
+    /// Checks if there is at least one word before the given word and its pos tag is the given pos tag.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - correctParses: All correct morphological parses of the previous words.
+    ///   - tag: Pos tag of the previous word
+    /// - Returns: True, if there is at least one word before the given word and its pos tag is the given pos tag, false
+    /// otherwise.
     private static func hasPreviousWordTag(index: Int, correctParses: [FsmParse], tag: MorphologicalTag) -> Bool{
         return index > 0 && correctParses[index - 1].containsTag(tag: tag)
     }
     
+    /// Given the disambiguation parse string, position of the current word in the sentence, all morphological parses of
+    /// all words in the sentence and all correct morphological parses of the previous words, the algorithm determines
+    /// the correct morphological parse of the current word in rule based manner.
+    /// - Parameters:
+    ///   - parseString: Disambiguation parse string. The string contains distinct subparses for the given word for a
+    ///                    determined root word. The subparses are separated with '$'.
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    ///   - correctParses: All correct morphological parses of the previous words.
+    /// - Returns: descriptionCorrect morphological subparse of the current word.
     private static func selectCaseForParseString(parseString: String, index: Int, fsmParses: [FsmParseList], correctParses: [FsmParse]) -> String{
         let surfaceForm = fsmParses[index].getFsmParse(index: 0).getSurfaceForm()
         let root = fsmParses[index].getFsmParse(index: 0).getWord().getName()
@@ -875,6 +943,14 @@ public class AutoDisambiguator{
         return ""
     }
     
+    /// Given the position of the current word in the sentence, all morphological parses of all words in the sentence and
+    /// all correct morphological parses of the previous words, the algorithm determines the correct morphological parse
+    /// of the current word in rule based manner.
+    /// - Parameters:
+    ///   - index: Position of the current word.
+    ///   - fsmParses: All morphological parses of the current sentence.
+    ///   - correctParses: All correct morphological parses of the previous words.
+    /// - Returns: Correct morphological parse of the current word.
     public static func caseDisambiguator(index: Int, fsmParses: [FsmParseList], correctParses: [FsmParse]) -> FsmParse?{
         let fsmParseList = fsmParses[index]
         let defaultCase = selectCaseForParseString(parseString: fsmParses[index].parsesWithoutPrefixAndSuffix(), index: index, fsmParses: fsmParses, correctParses: correctParses)
